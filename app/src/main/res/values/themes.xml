@@ -1,0 +1,13 @@
+<resources>
+    <!-- Hlavní téma aplikace -->
+    <style name="Theme.ExpenseTracker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Vaše hlavní nastavení stylu -->
+    </style>
+
+    <!-- Téma pro SplashActivity -->
+    <style name="Theme.SplashScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>
