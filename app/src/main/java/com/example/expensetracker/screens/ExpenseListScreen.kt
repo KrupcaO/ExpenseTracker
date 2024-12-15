@@ -2,23 +2,24 @@ package com.example.expensetracker.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.expensetracker.model.Expense
 import com.example.expensetracker.viewmodel.HomeViewModel
 
 @Composable
 fun ExpenseListScreen(homeViewModel: HomeViewModel, navController: NavController) {
     var filterText by remember { mutableStateOf("") }
 
-    // Použijte collectAsState pro sledování StateFlow
     val expenses by homeViewModel.expenses.collectAsState(initial = emptyList())
-
-    val filteredExpenses = expenses.filter {
-        it.category.contains(filterText, ignoreCase = true)
+    val totalAmount by remember { derivedStateOf { homeViewModel.getTotalAmount() } }
+    val totalAmountByCategory by remember {
+        derivedStateOf { homeViewModel.getTotalAmountByCategory(filterText) }
     }
 
     Box(
@@ -33,84 +34,67 @@ fun ExpenseListScreen(homeViewModel: HomeViewModel, navController: NavController
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                "Seznam výdajů",
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.headlineMedium
+                text = "Celková částka: ${"%.2f".format(totalAmount)} Kč",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            // Filtrovací textové pole
             TextField(
                 value = filterText,
                 onValueChange = { filterText = it },
                 label = { Text("Filtrovat podle kategorie") },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    cursorColor = MaterialTheme.colorScheme.primary
-                )
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // Zobrazení seznamu výdajů
-            for (expense in filteredExpenses) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text("Částka: ${expense.amount}", color = MaterialTheme.colorScheme.onSurface)
-                        Text("Kategorie: ${expense.category}", color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                text = "Součet pro kategorii '${filterText}': ${"%.2f".format(totalAmountByCategory)} Kč",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            // Tlačítko Upravit
-                            Button(
-                                onClick = {
-                                    navController.navigate("editExpense/${expense.id}")
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Text("Upravit")
-                            }
-
-                            // Tlačítko Smazat
-                            Button(
-                                onClick = {
-                                    homeViewModel.deleteExpense(expense.id) // Smazání záznamu
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.error,
-                                    contentColor = MaterialTheme.colorScheme.onError
-                                )
-                            ) {
-                                Text("Smazat")
-                            }
-                        }
-                    }
+            LazyColumn {
+                items(expenses.filter { it.category.contains(filterText, ignoreCase = true) }) { expense ->
+                    ExpenseItem(expense = expense, navController = navController)
                 }
             }
 
-            // Tlačítko pro přidání nového záznamu
+            Spacer(modifier = Modifier.height(8.dp))
+
             Button(
                 onClick = { navController.navigate("addExpense") },
-                modifier = Modifier.align(Alignment.End),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Přidat nový záznam")
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpenseItem(expense: Expense, navController: NavController) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text("Částka: ${"%.2f".format(expense.amount)} Kč", color = MaterialTheme.colorScheme.onSurface)
+                Text("Kategorie: ${expense.category}", color = MaterialTheme.colorScheme.onSurface)
+            }
+            // Tlačítko pro úpravu záznamu
+            Button(
+                onClick = { navController.navigate("editExpense/${expense.id}") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Přidat nový záznam")
+                Text("Upravit")
             }
         }
     }
