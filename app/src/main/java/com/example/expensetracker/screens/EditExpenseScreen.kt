@@ -18,6 +18,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
     var amount by remember { mutableStateOf(expense?.amount?.toString() ?: "") }
     var category by remember { mutableStateOf(expense?.category ?: "") }
     var showValidationDialog by remember { mutableStateOf(false) }
+    var validationMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -35,34 +36,65 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
             value = amount,
             onValueChange = { amount = it },
             label = { Text("Částka") },
-            modifier = Modifier.fillMaxWidth()
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            )
         )
 
         TextField(
             value = category,
             onValueChange = { category = it },
             label = { Text("Kategorie") },
-            modifier = Modifier.fillMaxWidth()
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            )
         )
 
-        Button(
-            onClick = {
-                val isValidAmount = amount.toDoubleOrNull() ?: 0.0 > 0
-                if (amount.isNotBlank() && category.isNotBlank() && isValidAmount) {
-                    val updatedExpense = Expense(
-                        id = expenseId,
-                        amount = amount.toDouble(),
-                        category = category
-                    )
-                    homeViewModel.updateExpense(updatedExpense)
-                    navController.popBackStack() // Vrátí se na seznam
-                } else {
-                    showValidationDialog = true
-                }
-            },
-            modifier = Modifier.align(Alignment.End)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Uložit změny")
+            // Tlačítko pro smazání záznamu
+            Button(
+                onClick = {
+                    homeViewModel.deleteExpense(expenseId) // Smazání záznamu
+                    navController.popBackStack() // Návrat na předchozí stránku
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            ) {
+                Text("Smazat")
+            }
+
+            // Tlačítko pro uložení změn
+            Button(
+                onClick = {
+                    val isValidAmount = amount.toDoubleOrNull() ?: 0.0 > 0
+                    if (amount.isBlank() || !isValidAmount) {
+                        validationMessage = "Zadejte částku větší než 0."
+                        showValidationDialog = true
+                    } else if (category.isBlank()) {
+                        validationMessage = "Vyplňte kategorii."
+                        showValidationDialog = true
+                    } else {
+                        val updatedExpense = Expense(
+                            id = expenseId,
+                            amount = amount.toDouble(),
+                            category = category
+                        )
+                        homeViewModel.updateExpense(updatedExpense) // Aktualizace záznamu
+                        navController.popBackStack()
+                    }
+                }
+            ) {
+                Text("Uložit změny")
+            }
         }
     }
 
@@ -71,7 +103,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
         AlertDialog(
             onDismissRequest = { showValidationDialog = false },
             title = { Text("Neplatné údaje") },
-            text = { Text("Zadejte platnou částku (větší než 0) a kategorii.") },
+            text = { Text(validationMessage) },
             confirmButton = {
                 TextButton(onClick = { showValidationDialog = false }) {
                     Text("OK")

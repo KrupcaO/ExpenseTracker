@@ -13,6 +13,7 @@ import com.example.expensetracker.screens.EditExpenseScreen
 import com.example.expensetracker.screens.ExpenseListScreen
 import com.example.expensetracker.screens.HomeScreen
 import com.example.expensetracker.viewmodel.HomeViewModel
+import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,30 +21,25 @@ class MainActivity : ComponentActivity() {
         val homeViewModel = HomeViewModel(application)
 
         setContent {
-            val navController = rememberNavController()
-            NavHost(
-                navController = navController,
-                startDestination = "home"
-            ) {
-                composable(route = "home") {
-                    HomeScreen(navController = navController)
-                }
-                composable(route = "addExpense") {
-                    AddExpenseScreen(homeViewModel = homeViewModel, navController = navController)
-                }
-                composable(route = "expenseList") {
-                    ExpenseListScreen(homeViewModel = homeViewModel, navController = navController)
-                }
-                composable(
-                    route = "editExpense/{expenseId}",
-                    arguments = listOf(navArgument("expenseId") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    val expenseId = backStackEntry.arguments?.getInt("expenseId") ?: -1
-                    EditExpenseScreen(
-                        homeViewModel = homeViewModel,
-                        expenseId = expenseId,
-                        navController = navController
-                    )
+            ExpenseTrackerTheme {
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "home") {
+                    composable(route = "home") {
+                        HomeScreen(navController = navController)
+                    }
+                    composable(route = "addExpense") {
+                        AddExpenseScreen(homeViewModel = homeViewModel, navController = navController)
+                    }
+                    composable(route = "expenseList") {
+                        ExpenseListScreen(homeViewModel = homeViewModel, navController = navController)
+                    }
+                    composable(
+                        route = "editExpense/{expenseId}",
+                        arguments = listOf(navArgument("expenseId") { type = NavType.IntType })
+                    ) { backStackEntry ->
+                        val expenseId = backStackEntry.arguments?.getInt("expenseId") ?: -1
+                        EditExpenseScreen(homeViewModel = homeViewModel, expenseId = expenseId, navController = navController)
+                    }
                 }
             }
         }
