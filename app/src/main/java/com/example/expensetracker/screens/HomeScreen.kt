@@ -25,7 +25,7 @@ fun HomeScreen(navController: NavController) {
                 .padding(16.dp)
         ) {
             Text(
-                text = if (ThemeState.isDarkTheme.value) "Světlý režim" else "Tmavý režim",
+                text = if (ThemeState.isDarkTheme.value) "Light mode" else "Dark mode",
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
@@ -39,7 +39,7 @@ fun HomeScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Vítejte v aplikaci Expense Tracker!",
+                text = "Welcome to Expense Tracker!",
                 color = MaterialTheme.colorScheme.onSurface
             )
 
@@ -50,7 +50,7 @@ fun HomeScreen(navController: NavController) {
                 onClick = { navController.navigate("addExpense") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Přidat nový záznam")
+                Text("Add new item")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -60,7 +60,7 @@ fun HomeScreen(navController: NavController) {
                 onClick = { navController.navigate("expenseList") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Zobrazit seznam výdajů")
+                Text("View list of expenses")
             }
         }
     }

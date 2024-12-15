@@ -34,7 +34,7 @@ fun ExpenseListScreen(homeViewModel: HomeViewModel, navController: NavController
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Celková částka: ${"%.2f".format(totalAmount)} Kč",
+                text = "Total amount: ${"%.2f".format(totalAmount)} Kč",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -42,12 +42,12 @@ fun ExpenseListScreen(homeViewModel: HomeViewModel, navController: NavController
             TextField(
                 value = filterText,
                 onValueChange = { filterText = it },
-                label = { Text("Filtrovat podle kategorie") },
+                label = { Text("Filter by category") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Text(
-                text = "Součet pro kategorii '${filterText}': ${"%.2f".format(totalAmountByCategory)} Kč",
+                text = "Total for the category '${filterText}': ${"%.2f".format(totalAmountByCategory)} Kč",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -64,7 +64,7 @@ fun ExpenseListScreen(homeViewModel: HomeViewModel, navController: NavController
                 onClick = { navController.navigate("addExpense") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Přidat nový záznam")
+                Text("Add new record")
             }
         }
     }
@@ -83,8 +83,8 @@ fun ExpenseItem(expense: Expense, navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text("Částka: ${"%.2f".format(expense.amount)} Kč", color = MaterialTheme.colorScheme.onSurface)
-                Text("Kategorie: ${expense.category}", color = MaterialTheme.colorScheme.onSurface)
+                Text("Amount: ${"%.2f".format(expense.amount)} Kč", color = MaterialTheme.colorScheme.onSurface)
+                Text("Category: ${expense.category}", color = MaterialTheme.colorScheme.onSurface)
             }
             // Tlačítko pro úpravu záznamu
             Button(
@@ -94,7 +94,7 @@ fun ExpenseItem(expense: Expense, navController: NavController) {
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Upravit")
+                Text("Edit")
             }
         }
     }

@@ -31,7 +31,7 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Přidat nový záznam",
+                text = "Add new record",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -39,7 +39,7 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
             TextField(
                 value = amount,
                 onValueChange = { amount = it },
-                label = { Text("Částka", color = MaterialTheme.colorScheme.onSurface) },
+                label = { Text("Amount", color = MaterialTheme.colorScheme.onSurface) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -52,7 +52,7 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
             TextField(
                 value = category,
                 onValueChange = { category = it },
-                label = { Text("Kategorie", color = MaterialTheme.colorScheme.onSurface) },
+                label = { Text("Category", color = MaterialTheme.colorScheme.onSurface) },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -66,10 +66,10 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
                 onClick = {
                     val isValidAmount = amount.toDoubleOrNull() ?: 0.0 > 0
                     if (amount.isBlank() || !isValidAmount) {
-                        validationMessage = "Zadejte částku větší než 0."
+                        validationMessage = "Enter an amount greater than 0."
                         showValidationDialog = true
                     } else if (category.isBlank()) {
-                        validationMessage = "Vyplňte kategorii."
+                        validationMessage = "Fill in the category."
                         showValidationDialog = true
                     } else {
                         homeViewModel.addExpense(amount.toDouble(), category)
@@ -82,7 +82,7 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Přidat záznam")
+                Text("Add record")
             }
         }
 
@@ -90,7 +90,7 @@ fun AddExpenseScreen(homeViewModel: HomeViewModel, navController: NavController)
         if (showValidationDialog) {
             AlertDialog(
                 onDismissRequest = { showValidationDialog = false },
-                title = { Text("Neplatné údaje") },
+                title = { Text("Invalid data") },
                 text = { Text(validationMessage) },
                 confirmButton = {
                     TextButton(onClick = { showValidationDialog = false }) {

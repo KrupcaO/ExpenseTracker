@@ -27,7 +27,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Editovat záznam",
+            text = "Edit item",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -35,7 +35,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
         TextField(
             value = amount,
             onValueChange = { amount = it },
-            label = { Text("Částka") },
+            label = { Text("Amount") },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
@@ -45,7 +45,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
         TextField(
             value = category,
             onValueChange = { category = it },
-            label = { Text("Kategorie") },
+            label = { Text("Category") },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface
@@ -69,7 +69,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
                     contentColor = MaterialTheme.colorScheme.onError
                 )
             ) {
-                Text("Smazat")
+                Text("Delete")
             }
 
             // Tlačítko pro uložení změn
@@ -77,10 +77,10 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
                 onClick = {
                     val isValidAmount = amount.toDoubleOrNull() ?: 0.0 > 0
                     if (amount.isBlank() || !isValidAmount) {
-                        validationMessage = "Zadejte částku větší než 0."
+                        validationMessage = "Enter an amount greater than 0."
                         showValidationDialog = true
                     } else if (category.isBlank()) {
-                        validationMessage = "Vyplňte kategorii."
+                        validationMessage = "Fill in the category."
                         showValidationDialog = true
                     } else {
                         val updatedExpense = Expense(
@@ -93,7 +93,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
                     }
                 }
             ) {
-                Text("Uložit změny")
+                Text("Save changes")
             }
         }
     }
@@ -102,7 +102,7 @@ fun EditExpenseScreen(homeViewModel: HomeViewModel, expenseId: Int, navControlle
     if (showValidationDialog) {
         AlertDialog(
             onDismissRequest = { showValidationDialog = false },
-            title = { Text("Neplatné údaje") },
+            title = { Text("Invalid data") },
             text = { Text(validationMessage) },
             confirmButton = {
                 TextButton(onClick = { showValidationDialog = false }) {
